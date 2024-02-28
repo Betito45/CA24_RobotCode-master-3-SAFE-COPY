@@ -24,39 +24,39 @@ public class Climber extends Subsystem {
   private CANSparkMax mLeftClimberMotor;
   private CANSparkMax mRightClimberMotor;
 
-  private SparkPIDController mLeftClimberPID;
-  private SparkPIDController mRightClimberPID;
+  // private SparkPIDController mLeftClimberPID;
+  // private SparkPIDController mRightClimberPID;
 
-  private RelativeEncoder mLeftClimberEncoder;
-  private RelativeEncoder mRightClimberEncoder;
+  // private RelativeEncoder mLeftClimberEncoder;
+  // private RelativeEncoder mRightClimberEncoder;
 
   private Climber() {
     super("Climber");
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftClimberMotor = new CANSparkMax(Constants.kClimberLeftMotorId, MotorType.kBrushless);
-    mRightClimberMotor = new CANSparkMax(Constants.kClimberRightMotorId, MotorType.kBrushless);
+    mLeftClimberMotor = new CANSparkMax(Constants.kClimberLeftMotorId, MotorType.kBrushed);
+    mRightClimberMotor = new CANSparkMax(Constants.kClimberRightMotorId, MotorType.kBrushed);
 
-    mLeftClimberPID = mLeftClimberMotor.getPIDController();
-    mLeftClimberPID.setP(Constants.kClimberP);
-    mLeftClimberPID.setI(Constants.kClimberI);
-    mLeftClimberPID.setD(Constants.kClimberD);
-    mLeftClimberPID.setOutputRange(Constants.kClimberMinOutput, Constants.kClimberMaxOutput);
+    // mLeftClimberPID = mLeftClimberMotor.getPIDController();
+    // mLeftClimberPID.setP(Constants.kClimberP);
+    // mLeftClimberPID.setI(Constants.kClimberI);
+    // mLeftClimberPID.setD(Constants.kClimberD);
+    // mLeftClimberPID.setOutputRange(Constants.kClimberMinOutput, Constants.kClimberMaxOutput);
 
-    mRightClimberPID = mRightClimberMotor.getPIDController();
-    mRightClimberPID.setP(Constants.kClimberP);
-    mRightClimberPID.setI(Constants.kClimberI);
-    mRightClimberPID.setD(Constants.kClimberD);
-    mRightClimberPID.setOutputRange(Constants.kClimberMinOutput, Constants.kClimberMaxOutput);
+    // mRightClimberPID = mRightClimberMotor.getPIDController();
+    // mRightClimberPID.setP(Constants.kClimberP);
+    // mRightClimberPID.setI(Constants.kClimberI);
+    // mRightClimberPID.setD(Constants.kClimberD);
+    // mRightClimberPID.setOutputRange(Constants.kClimberMinOutput, Constants.kClimberMaxOutput);
 
-    mLeftClimberEncoder = mLeftClimberMotor.getEncoder();
-    mLeftClimberEncoder.setPositionConversionFactor(Constants.kClimberGearRatio);
-    mLeftClimberEncoder.setVelocityConversionFactor(Constants.kClimberGearRatio);
+    // mLeftClimberEncoder = mLeftClimberMotor.getEncoder();
+    // mLeftClimberEncoder.setPositionConversionFactor(Constants.kClimberGearRatio);
+    // mLeftClimberEncoder.setVelocityConversionFactor(Constants.kClimberGearRatio);
 
-    mRightClimberEncoder = mRightClimberMotor.getEncoder();
-    mRightClimberEncoder.setPositionConversionFactor(Constants.kClimberGearRatio);
-    mRightClimberEncoder.setVelocityConversionFactor(Constants.kClimberGearRatio);
+    // mRightClimberEncoder = mRightClimberMotor.getEncoder();
+    // mRightClimberEncoder.setPositionConversionFactor(Constants.kClimberGearRatio);
+    // mRightClimberEncoder.setVelocityConversionFactor(Constants.kClimberGearRatio);
 
     mLeftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     mRightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -78,8 +78,10 @@ public class Climber extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    mLeftClimberPID.setReference(mPeriodicIO.climber_left_speed, ControlType.kVelocity);
-    mRightClimberPID.setReference(mPeriodicIO.climber_right_speed, ControlType.kVelocity);
+    mLeftClimberMotor.set(mPeriodicIO.climber_left_speed) ;
+    mLeftClimberMotor.set(mPeriodicIO.climber_right_speed) ;
+    // mLeftClimberPID.setReference(mPeriodicIO.climber_left_speed, ControlType.kDutyCycle);
+    // mRightClimberPID.setReference(mPeriodicIO.climber_right_speed, ControlType.kDutyCycle);
   }
 
   @Override
@@ -90,9 +92,9 @@ public class Climber extends Subsystem {
   @Override
   public void outputTelemetry() {
     putNumber("Left speed setpoint:", mPeriodicIO.climber_left_speed);
-    putNumber("Left speed:", mLeftClimberEncoder.getVelocity());
+    // putNumber("Left speed:", mLeftClimberEncoder.getVelocity());
     putNumber("Right speed setpoint:", mPeriodicIO.climber_right_speed);
-    putNumber("Right speed:", mRightClimberEncoder.getVelocity());
+    // putNumber("Right speed:", mRightClimberEncoder.getVelocity());
   }
 
   @Override
