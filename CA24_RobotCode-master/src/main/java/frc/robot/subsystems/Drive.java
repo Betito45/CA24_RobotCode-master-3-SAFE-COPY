@@ -24,8 +24,9 @@ import frc.robot.Constants;
 
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkBase.ControlType;
 
-public class Drive extends SubsystemBase {
+public class Drive extends Subsystem {
 
     private final SwerveModule frontLeft = new SwerveModule(
             "frontLeft",
@@ -64,7 +65,20 @@ public class Drive extends SubsystemBase {
 
     private SwerveModulePosition[] previousPositions = new SwerveModulePosition[4];
 
-    public Drive() {
+    private static Drive mInstance;
+
+
+    public static Drive getInstance() {
+        if (mInstance == null) {
+          mInstance = new Drive();
+        }
+        return mInstance;
+      }
+    
+
+    private Drive() {
+        super("Drive");
+
 
         navX = new AHRS(Port.kMXP);
         new Thread(() -> {
@@ -261,6 +275,19 @@ public class Drive extends SubsystemBase {
         int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
         SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
         angle.set(navX.getAngle() - Units.radiansToDegrees(twist.dtheta));
+    }
+
+    @Override
+    public void outputTelemetry() {
+        // DAVID - ADD STUFF HERE IF YOU WANT IT LOGGED
+    }
+
+    @Override
+    public void reset() {
+    }
+
+    @Override
+    public void writePeriodicOutputs() {
     }
 
 }

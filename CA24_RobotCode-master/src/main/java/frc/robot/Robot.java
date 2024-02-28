@@ -58,7 +58,7 @@ public class Robot extends LoggedRobot {
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
   private final Intake m_intake = Intake.getInstance();
   private final Compressor m_compressor = Compressor.getInstance();
-  private final Drive m_drive = new Drive();
+  private final Drive m_drive = Drive.getInstance();
   private final Shooter m_shooter = Shooter.getInstance();
   private final Climber m_climber = Climber.getInstance();
   public final LEDs m_leds = LEDs.getInstance();
