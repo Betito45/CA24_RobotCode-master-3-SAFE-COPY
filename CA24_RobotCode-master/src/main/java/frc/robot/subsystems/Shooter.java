@@ -39,8 +39,8 @@ public class Shooter extends Subsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushless);
-    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushless);
+    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushed);
+    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushed);
     mLeftShooterMotor.restoreFactoryDefaults();
     mRightShooterMotor.restoreFactoryDefaults();
 
@@ -86,8 +86,11 @@ public class Shooter extends Subsystem {
     // mRightShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
 
     // DAVID - NEED REAL VOLTAGE NUMBER HERE! ONE OF THE NUMBERS MIGHT NEED TO BE NEGATIVE
-    mLeftShooterPID.setReference(8.0, ControlType.kVoltage);
-    mRightShooterPID.setReference(8.0, ControlType.kVoltage);
+    // mLeftShooterPID.setReference(8.0, ControlType.kVoltage);
+    // mRightShooterPID.setReference(8.0, ControlType.kVoltage);
+
+    mLeftShooterMotor.set(0.8);
+    mRightShooterMotor.set(0.8);
   }
 
   @Override

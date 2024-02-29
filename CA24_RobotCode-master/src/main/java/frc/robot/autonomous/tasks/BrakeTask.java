@@ -1,12 +1,12 @@
 package frc.robot.autonomous.tasks;
 
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 public class BrakeTask extends Task {
-  private Drivetrain m_drive;
+  private Drive m_drive;
 
   public BrakeTask() {
-    m_drive = Drivetrain.getInstance();
+    m_drive = Drive.getInstance();
   }
 
   @Override
@@ -24,6 +24,6 @@ public class BrakeTask extends Task {
 
   @Override
   public void done() {
-    m_drive.drive(0, 0);
+    m_drive.drive(0, 0, 0, false);
   }
 }

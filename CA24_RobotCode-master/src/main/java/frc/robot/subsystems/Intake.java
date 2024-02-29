@@ -42,7 +42,7 @@ public class Intake extends Subsystem {
   private Intake() {
     super("Intake");
 
-    mIntakeMotor = new CANSparkMax(Constants.Intake.kIntakeMotorId, MotorType.kBrushless);
+    mIntakeMotor = new CANSparkMax(Constants.Intake.kIntakeMotorId, MotorType.kBrushed);
     mIntakeMotor.restoreFactoryDefaults();
     mIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 

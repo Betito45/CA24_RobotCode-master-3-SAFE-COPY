@@ -79,7 +79,7 @@ public class Climber extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     mLeftClimberMotor.set(mPeriodicIO.climber_left_speed) ;
-    mLeftClimberMotor.set(mPeriodicIO.climber_right_speed) ;
+    mRightClimberMotor.set(mPeriodicIO.climber_right_speed) ;
     // mLeftClimberPID.setReference(mPeriodicIO.climber_left_speed, ControlType.kDutyCycle);
     // mRightClimberPID.setReference(mPeriodicIO.climber_right_speed, ControlType.kDutyCycle);
   }

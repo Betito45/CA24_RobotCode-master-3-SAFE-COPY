@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.autonomous.tasks.DriveTrajectoryTask;
 import frc.robot.autonomous.tasks.Task;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 public abstract class AutoModeBase {
   private ArrayList<Task> m_tasks;
@@ -52,7 +52,7 @@ public abstract class AutoModeBase {
       // Rotation2d(0));
     }
 
-    Drivetrain m_drive = Drivetrain.getInstance();
+    Drive m_drive = Drive.getInstance();
     // m_drive.resetOdometry(startingPose);
     // mGyro.reset();
     m_drive.resetOdometry(startingPose);

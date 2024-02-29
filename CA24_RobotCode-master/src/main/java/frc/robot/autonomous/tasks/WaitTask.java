@@ -1,13 +1,13 @@
 package frc.robot.autonomous.tasks;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 public class WaitTask extends Task {
   private Timer m_runningTimer = new Timer();
   private double m_targetTime;
 
-  private Drivetrain m_swerve = Drivetrain.getInstance();
+  private Drive m_swerve = Drive.getInstance();
 
   public WaitTask(double timeSeconds) {
     m_targetTime = timeSeconds;
@@ -20,7 +20,7 @@ public class WaitTask extends Task {
 
   @Override
   public void update() {
-    m_swerve.drive(0, 0);
+    m_swerve.drive(0, 0, 0, false);
   }
 
   @Override

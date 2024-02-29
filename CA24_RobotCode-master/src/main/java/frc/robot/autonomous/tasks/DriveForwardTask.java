@@ -4,10 +4,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 public class DriveForwardTask extends Task {
-  private Drivetrain m_drive;
+  private Drive m_drive;
   private double m_targetDistance;
   private double m_speed;
   private Pose2d m_startPose;
@@ -16,7 +16,7 @@ public class DriveForwardTask extends Task {
   private double m_lastTime = 0;
 
   public DriveForwardTask(double distance, double speed) {
-    m_drive = Drivetrain.getInstance();
+    m_drive = Drive.getInstance();
     m_targetDistance = distance;
     m_speed = speed;
   }
@@ -26,19 +26,19 @@ public class DriveForwardTask extends Task {
     m_runningTimer.reset();
     m_runningTimer.start();
 
-    m_startPose = m_drive.getPose();
+    m_startPose = m_drive.getPoseWithoutVision();
   }
 
   @Override
   public void update() {
-    m_drive.drive(m_speed, 0);
+    m_drive.drive(m_speed, 0, 0, false);
   }
 
   @Override
   public void updateSim() {
     // This simulates the robot driving in the positive x direction
     if (!RobotBase.isReal()) {
-      Pose2d currentPose = m_drive.getPose();
+      Pose2d currentPose = m_drive.getPoseWithoutVision();
 
       // Move "forward", based on the robot's current rotation
       double newX = currentPose.getX()
@@ -51,20 +51,20 @@ public class DriveForwardTask extends Task {
           newY,
           currentPose.getRotation());
 
-      m_drive.setPose(newPose);
+      m_drive.resetOdometry(newPose);
       m_lastTime = m_runningTimer.get();
     }
   }
 
   @Override
   public boolean isFinished() {
-    Pose2d relativePose = m_startPose.relativeTo(m_drive.getPose());
+    Pose2d relativePose = m_startPose.relativeTo(m_drive.getPoseWithoutVision());
     return Math.hypot(relativePose.getX(), relativePose.getY()) >= m_targetDistance;
   }
 
   @Override
   public void done() {
     DriverStation.reportWarning("Auto driving done", false);
-    m_drive.drive(0, 0);
+    m_drive.drive(0, 0, 0, false);
   }
 }

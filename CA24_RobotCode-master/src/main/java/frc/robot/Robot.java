@@ -149,8 +149,14 @@ public class Robot extends LoggedRobot {
     //double xSpeed = m_speedLimiter.calculate(m_driverController.getForwardAxis() * maxSpeed);
     
     double maxSpeed = 4.0;
-    double xSpeed = m_speedLimiter.calculate(m_driverController.getForwardAxis() * maxSpeed);
-    double ySpeed = m_speedLimiter.calculate(m_driverController.getRawAxis(4) * maxSpeed);
+    // double xSpeed = m_speedLimiter.calculate(m_driverController.getForwardAxis() * maxSpeed);
+    // double ySpeed = m_speedLimiter.calculate(m_driverController.getRawAxis(4) * maxSpeed);
+
+    m_drive.drive(
+        m_driverController.getLateralAxis() * maxSpeed,
+        m_driverController.getForwardAxis() * maxSpeed,
+        m_driverController.getTurnAxis() * maxSpeed,
+        true);
 
 
 
@@ -161,9 +167,9 @@ public class Robot extends LoggedRobot {
 
     // m_drive.slowMode(m_driverController.getWantsSlowMode());
     // m_drive.speedMode(m_driverController.getWantsSpeedMode());
-    double rot = m_rotLimiter.calculate(m_driverController.getTurnAxis() * Math.PI);
+    // double rot = m_rotLimiter.calculate(m_driverController.getTurnAxis() * Math.PI);
 
-    m_drive.drive(xSpeed,ySpeed, rot, true);
+    // m_drive.drive(xSpeed,ySpeed, rot, true);
 
     // Shooter variable speed
     if (m_driverController.getWantsMoreSpeed() || m_operatorController.getWantsMoreSpeed()) {

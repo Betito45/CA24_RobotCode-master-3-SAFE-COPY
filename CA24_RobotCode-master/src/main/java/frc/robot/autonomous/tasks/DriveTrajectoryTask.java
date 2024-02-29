@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 public class DriveTrajectoryTask extends Task {
-  private Drivetrain m_drive;
+  private Drive m_drive;
   private PathPlannerTrajectory m_autoTrajectory;
   private boolean m_isFinished = false;
   private String m_smartDashboardKey = "DriveTrajectoryTask/";
@@ -27,7 +27,7 @@ public class DriveTrajectoryTask extends Task {
   private PPRamseteController m_driveController;
 
   public DriveTrajectoryTask(String pathName, double maxSpeed, double maxAcceleration) {
-    m_drive = Drivetrain.getInstance();
+    m_drive = Drive.getInstance();
     Path trajectoryPath = null;
 
     try {
@@ -50,7 +50,7 @@ public class DriveTrajectoryTask extends Task {
     m_autoTrajectory = new PathPlannerTrajectory(
         m_autoPath,
         new ChassisSpeeds(),
-        m_drive.getPose().getRotation());
+        m_drive.getPoseWithoutVision().getRotation());
 
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/ramsete.html
     m_driveController = new PPRamseteController(2.0, 0.7);
@@ -62,21 +62,21 @@ public class DriveTrajectoryTask extends Task {
     m_runningTimer.start();
 
     // Set the initial Pose2d
-    m_drive.setPose(m_autoPath.getStartingDifferentialPose());
+    m_drive.resetOdometry(m_autoPath.getStartingDifferentialPose());
     DriverStation.reportWarning(m_autoPath.getStartingDifferentialPose().toString(), false);
 
-    m_drive.clearTurnPIDAccumulation();
+    // m_drive.clearTurnPIDAccumulation();
     DriverStation.reportWarning("Running path for " + DriverStation.getAlliance().toString(), false);
   }
 
   @Override
   public void update() {
     State goal = m_autoTrajectory.sample(m_runningTimer.get());
-    ChassisSpeeds chassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(m_drive.getPose(), goal);
+    ChassisSpeeds chassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(m_drive.getPoseWithoutVision(), goal);
 
     m_drive.drive(
-        chassisSpeeds.vxMetersPerSecond,
-        chassisSpeeds.omegaRadiansPerSecond);
+        chassisSpeeds.vxMetersPerSecond, 0, 
+        chassisSpeeds.omegaRadiansPerSecond, false);
 
     m_isFinished |= m_runningTimer.get() >= m_autoTrajectory.getTotalTimeSeconds();
 
@@ -96,7 +96,7 @@ public class DriveTrajectoryTask extends Task {
           autoState.positionMeters.getY(),
           autoState.heading);
 
-      m_drive.setPose(targetPose2d);
+      m_drive.resetOdometry(targetPose2d);
     }
   }
 
@@ -112,6 +112,6 @@ public class DriveTrajectoryTask extends Task {
   @Override
   public void done() {
     DriverStation.reportWarning("Auto trajectory done", false);
-    m_drive.drive(0, 0);
+    m_drive.drive(0, 0, 0, false);
   }
 }
