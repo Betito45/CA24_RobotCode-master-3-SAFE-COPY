@@ -46,7 +46,7 @@ public class Intake extends Subsystem {
     mIntakeMotor.restoreFactoryDefaults();
     mIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    mPivotMotor = new CANSparkMax(Constants.Intake.kPivotMotorId, MotorType.kBrushless);
+    mPivotMotor = new CANSparkMax(Constants.Intake.kPivotMotorId, MotorType.kBrushed);
     mPivotMotor.restoreFactoryDefaults();
     mPivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     mPivotMotor.setSmartCurrentLimit(10);

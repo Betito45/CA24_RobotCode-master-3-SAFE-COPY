@@ -39,8 +39,8 @@ public class Shooter extends Subsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushed);
-    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushed);
+    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushless);
+    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushless);
     mLeftShooterMotor.restoreFactoryDefaults();
     mRightShooterMotor.restoreFactoryDefaults();
 
@@ -89,8 +89,8 @@ public class Shooter extends Subsystem {
     // mLeftShooterPID.setReference(8.0, ControlType.kVoltage);
     // mRightShooterPID.setReference(8.0, ControlType.kVoltage);
 
-    mLeftShooterMotor.set(0.8);
-    mRightShooterMotor.set(0.8);
+    // mLeftShooterMotor.set(0.3);
+    // mRightShooterMotor.set(0.3);
   }
 
   @Override

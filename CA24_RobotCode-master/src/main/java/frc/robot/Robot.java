@@ -35,6 +35,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.leds.LEDs;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -81,10 +82,13 @@ public class Robot extends LoggedRobot {
     // Add all subsystems to the list
     m_allSubsystems.add(m_intake);
     m_allSubsystems.add(m_compressor);
-    //m_allSubsystems.add(m_drive);
+    m_allSubsystems.add(m_drive);
     m_allSubsystems.add(m_shooter);
     m_allSubsystems.add(m_climber);
     m_allSubsystems.add(m_leds);
+
+    // Start the camera server and start capturing images
+    CameraServer.startAutomaticCapture();
 
     // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);

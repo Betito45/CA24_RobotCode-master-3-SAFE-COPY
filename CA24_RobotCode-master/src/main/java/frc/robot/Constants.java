@@ -12,17 +12,17 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
   public static class Robot {
-    public static final double k_width = 26; // Inches
-    public static final double k_length = 28; // Inches
+    public static final double k_width = 24; // Inches
+    public static final double k_length = 24; // Inches
   }
 
   public static class Intake {
     // Motors
-    public static final int kIntakeMotorId = 9;
-    public static final int kPivotMotorId = 10;
+    public static final int kIntakeMotorId = 17;
+    public static final int kPivotMotorId = 18;
 
     // DIO
-    public static final int k_pivotEncoderId = 0;
+    public static final int k_pivotEncoderId = 19;
     public static final int k_intakeLimitSwitchId = 2;
 
     // Absolute encoder offset
@@ -35,9 +35,9 @@ public class Constants {
     public static final double k_pivotAngleStow = 275;
 
     // Intake speeds
-    public static final double k_intakeSpeed = 0.7;
-    public static final double k_ejectSpeed = -0.45;
-    public static final double k_feedShooterSpeed = -0.5;
+    public static final double k_intakeSpeed = 0.3;
+    public static final double k_ejectSpeed = -0.3;
+    public static final double k_feedShooterSpeed = -0.3;
   }
 
   // PCM
@@ -47,8 +47,8 @@ public class Constants {
   // DIO
 
   // Shooter
-  public static final int kShooterLeftMotorId = 12;
-  public static final int kShooterRightMotorId = 13;
+  public static final int kShooterLeftMotorId = 15;
+  public static final int kShooterRightMotorId = 16;
 
   public static final double kShooterP = 0.00005;
   public static final double kShooterI = 0.0;
@@ -59,15 +59,15 @@ public class Constants {
   public static final double kShooterMaxOutput = 1;
 
   // Climber
-  public static final int kClimberLeftMotorId = 14;
-  public static final int kClimberRightMotorId = 15;
+  public static final int kClimberLeftMotorId = 13;
+  public static final int kClimberRightMotorId = 14;
   // public static final double kClimberClimbSpeed = 600.0; // RPM
   // public static final double kClimberReleaseSpeed = -600.0; // RPM
 
-  public static final double kClimberClimbSpeed = 0.5; // percent
-  public static final double kClimberReleaseSpeed = -0.5; // percent
+  public static final double kClimberClimbSpeed = 0.2; // percent
+  public static final double kClimberReleaseSpeed = -0.2; // percent
 
-  public static final double kClimberGearRatio = 1.0 / 12.0;
+  public static final double kClimberGearRatio = 1.0 / 64;
 
   public static final double kClimberP = 0.001;
   public static final double kClimberI = 0.0;

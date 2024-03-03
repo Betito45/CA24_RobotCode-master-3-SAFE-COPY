@@ -33,7 +33,7 @@ public class Drive extends Subsystem {
             ElectronicsIDs.FrontLeftDriveMotorID,
             ElectronicsIDs.FrontLeftTurnMotorID,
             ElectronicsIDs.FrontLeftTurnEncoderID,
-            DriveConstants.FrontLeftMagnetOffset,false   );
+            DriveConstants.FrontLeftMagnetOffset,false  );
 
     private final SwerveModule frontRight = new SwerveModule(
             "frontRight",

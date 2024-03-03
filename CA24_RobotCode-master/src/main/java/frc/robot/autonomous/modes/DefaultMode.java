@@ -2,6 +2,8 @@ package frc.robot.autonomous.modes;
 
 import frc.robot.autonomous.tasks.BrakeTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
+import frc.robot.autonomous.tasks.ShooterTask;
+import frc.robot.autonomous.tasks.WaitTask;
 
 public class DefaultMode extends AutoModeBase {
   public void queueTasks() {
@@ -18,13 +20,17 @@ public class DefaultMode extends AutoModeBase {
     // new IntakeTask(IntakeState.INTAKE, PivotTarget.GROUND),
     // new WaitTask(0.1)));
 
+    queueTask( new ShooterTask(.3));
+    queueTask(new WaitTask(1));
+   
+
     queueTask(new DriveForwardTask(1.3, 0.4));
 
     // queueTask(new ParallelTask(
     // new IntakeTask(IntakeState.PULSE, PivotTarget.STOW),
     // new WaitTask(0.1)));
 
-    queueTask(new DriveForwardTask(1.2, -0.4));
+   
 
     // queueTask(new ParallelTask(
     // new IntakeTask(IntakeState.EJECT, PivotTarget.STOW),
