@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -14,16 +18,26 @@ import frc.robot.Helpers;
 import frc.robot.subsystems.leds.LEDs;
 
 public class Intake extends Subsystem {
+
+  // DAVID - WILL NEED TO UPDATE THESE VALUES!!!
   private static final double k_pivotMotorP = 0.12;
   private static final double k_pivotMotorI = 0.0;
   private static final double k_pivotMotorD = 0.001;
 
-  private final PIDController m_pivotPID = new PIDController(k_pivotMotorP, k_pivotMotorI, k_pivotMotorD);
+  private SparkPIDController m_pivotPID;
+
+  // private final PIDController m_pivotPID = new PIDController(k_pivotMotorP, k_pivotMotorI, k_pivotMotorD);
 
   private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder(Constants.Intake.k_pivotEncoderId);
   private final DigitalInput m_IntakeLimitSwitch = new DigitalInput(Constants.Intake.k_intakeLimitSwitchId);
 
   public final LEDs m_leds = LEDs.getInstance();
+
+  private AbsoluteEncoder mPivotEncoder;
+
+  private final double GearRatio = 10.0 ; // DAVID NEED TO FIND OUT WHAT REAL VALUE IS
+  private final double MotorRotationsPerDegree = 0.0 ;
+
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private static Intake mInstance;
@@ -50,6 +64,24 @@ public class Intake extends Subsystem {
     mPivotMotor.restoreFactoryDefaults();
     mPivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     mPivotMotor.setSmartCurrentLimit(10);
+
+    mPivotEncoder = mPivotMotor.getAbsoluteEncoder() ;
+    mPivotEncoder.setZeroOffset(0.0) ;  // DAVID - need to get angle here!
+
+    m_pivotPID = mPivotMotor.getPIDController();
+    m_pivotPID.setP(Constants.kShooterP);
+    m_pivotPID.setI(Constants.kShooterI);
+    m_pivotPID.setD(Constants.kShooterD);
+    m_pivotPID.setFF(Constants.kShooterFF);
+    m_pivotPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
+
+    int smartMotionSlot = 0;
+    m_pivotPID.setSmartMotionMaxVelocity(maxVel, smartMotionSlot);  // set values in rotations per second
+    m_pivotPID.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
+    m_pivotPID.setSmartMotionMaxAccel(maxAcc, smartMotionSlot);
+    m_pivotPID.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
+
+
 
     m_periodicIO = new PeriodicIO();
   }
@@ -88,12 +120,16 @@ public class Intake extends Subsystem {
 
     // Pivot control
     double pivot_angle = pivotTargetToAngle(m_periodicIO.pivot_target);
-    m_periodicIO.intake_pivot_voltage = m_pivotPID.calculate(getPivotAngleDegrees(), pivot_angle);
 
-    // If the pivot is at exactly 0.0, it's probably not connected, so disable it
-    if (m_pivotEncoder.get() == 0.0) {
-      m_periodicIO.intake_pivot_voltage = 0.0;
-    }
+    m_pivotPID.setReference(pivot_angle, ControlType.kSmartMotion);
+
+
+    // m_periodicIO.intake_pivot_voltage = m_pivotPID.calculate(getPivotAngleDegrees(), pivot_angle);
+
+    // // If the pivot is at exactly 0.0, it's probably not connected, so disable it
+    // if (m_pivotEncoder.get() == 0.0) {
+    //   m_periodicIO.intake_pivot_voltage = 0.0;
+    // }
 
     // Intake control
     m_periodicIO.intake_speed = intakeStateToSpeed(m_periodicIO.intake_state);
