@@ -80,14 +80,15 @@ public class Drive extends Subsystem {
         super("Drive");
 
 
-        navX = new AHRS(Port.kMXP);
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                zeroHeading();
-            } catch (Exception e) {
-            }
-        }).start();
+        // DAVID - I COMMENTED THIS OUT MORNING OF 3/5
+        // navX = new AHRS(Port.kMXP);
+        // new Thread(() -> {
+        //     try {
+        //         Thread.sleep(1000);
+        //         zeroHeading();
+        //     } catch (Exception e) {
+        //     }
+        // }).start();
 
         odometry = new SwerveDriveOdometry(
                 DriveConstants.kinematics,
