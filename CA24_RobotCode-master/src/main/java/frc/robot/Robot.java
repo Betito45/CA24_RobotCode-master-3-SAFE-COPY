@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
@@ -35,6 +38,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.leds.LEDs;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -71,6 +75,10 @@ public class Robot extends LoggedRobot {
   // Simulation stuff
   private final Field m_field = Field.getInstance();
 
+  private Trigger restartGyroButton; // driver button 9
+  boolean lastResetButtonState = false ;
+
+
   /**
    * This function is run when the robot is first started up.
    */
@@ -81,10 +89,17 @@ public class Robot extends LoggedRobot {
     // Add all subsystems to the list
     m_allSubsystems.add(m_intake);
     m_allSubsystems.add(m_compressor);
-    //m_allSubsystems.add(m_drive);
+    m_allSubsystems.add(m_drive);
     m_allSubsystems.add(m_shooter);
     m_allSubsystems.add(m_climber);
     m_allSubsystems.add(m_leds);
+
+    // DAVID - YOU NEED TO UPDATE THIS BUTTON NUMNBER TO THE ONE YOU WANT TO USE FROM YOUR DRIVER CONTROLLER
+    restartGyroButton = new JoystickButton(m_driverController, 999);
+
+
+    // Start the camera server and start capturing images
+    CameraServer.startAutomaticCapture();
 
     // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);
@@ -96,6 +111,13 @@ public class Robot extends LoggedRobot {
     m_allSubsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
     m_allSubsystems.forEach(subsystem -> subsystem.outputTelemetry());
     m_allSubsystems.forEach(subsystem -> subsystem.writeToLog());
+
+    // if the button is pressed and it wasn't pressed last time we looked...
+    var restartButtonPressed = restartGyroButton.getAsBoolean() ;
+    if ( restartButtonPressed && !lastResetButtonState ) {
+      m_drive.zeroHeading();
+    }
+    lastResetButtonState = restartButtonPressed ;
 
     updateSim();
 

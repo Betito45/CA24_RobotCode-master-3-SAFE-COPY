@@ -1,7 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -14,16 +19,26 @@ import frc.robot.Helpers;
 import frc.robot.subsystems.leds.LEDs;
 
 public class Intake extends Subsystem {
+
+  // DAVID - WILL NEED TO UPDATE THESE VALUES!!!
   private static final double k_pivotMotorP = 0.12;
   private static final double k_pivotMotorI = 0.0;
   private static final double k_pivotMotorD = 0.001;
 
-  private final PIDController m_pivotPID = new PIDController(k_pivotMotorP, k_pivotMotorI, k_pivotMotorD);
+  private SparkPIDController m_pivotPID;
 
-  private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder(Constants.Intake.k_pivotEncoderId);
+  // private final PIDController m_pivotPID = new PIDController(k_pivotMotorP, k_pivotMotorI, k_pivotMotorD);
+
+  //private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder(Constants.Intake.k_pivotEncoderId);
   private final DigitalInput m_IntakeLimitSwitch = new DigitalInput(Constants.Intake.k_intakeLimitSwitchId);
 
   public final LEDs m_leds = LEDs.getInstance();
+
+  private AbsoluteEncoder m_pivotEncoder;
+
+  private final double GearRatio = 4.0 ; // DAVID NEED TO FIND OUT WHAT REAL VALUE IS
+  private final double MotorRotationsPerDegree = (1 / 360.0) * GearRatio ;
+
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private static Intake mInstance;
@@ -46,10 +61,30 @@ public class Intake extends Subsystem {
     mIntakeMotor.restoreFactoryDefaults();
     mIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    mPivotMotor = new CANSparkMax(Constants.Intake.kPivotMotorId, MotorType.kBrushless);
+    mPivotMotor = new CANSparkMax(Constants.Intake.kPivotMotorId, MotorType.kBrushed);
     mPivotMotor.restoreFactoryDefaults();
     mPivotMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     mPivotMotor.setSmartCurrentLimit(10);
+
+    m_pivotEncoder = mPivotMotor.getAbsoluteEncoder( Type.kDutyCycle) ;
+    m_pivotEncoder.setZeroOffset(0.0) ;  // DAVID - need to get angle here! Use Rev Hardware Client to get value.
+
+    m_pivotPID = mPivotMotor.getPIDController();
+    m_pivotPID.setFeedbackDevice(m_pivotEncoder) ;
+    m_pivotPID.setP(k_pivotMotorP);
+    m_pivotPID.setI(k_pivotMotorI);
+    m_pivotPID.setD(k_pivotMotorD);
+    m_pivotPID.setFF(0);  // DAVID - ask expert if feed forward is needed for this. Its sort of like an arm
+
+
+    // DAVID - find someone familiar with REV Smart motion to help here. Maybe 2 revolutiuons per second?
+    int smartMotionSlot = 0;
+    m_pivotPID.setSmartMotionMaxVelocity(2.0, smartMotionSlot);  // set values in rotations per second
+    m_pivotPID.setSmartMotionMinOutputVelocity(0.0, smartMotionSlot);
+    m_pivotPID.setSmartMotionMaxAccel(4.0, smartMotionSlot);  // accelarate to full speed in 1/2 second
+    m_pivotPID.setSmartMotionAllowedClosedLoopError(0.05, smartMotionSlot);  // david - Find expert to help with this number.
+
+
 
     m_periodicIO = new PeriodicIO();
   }
@@ -88,12 +123,17 @@ public class Intake extends Subsystem {
 
     // Pivot control
     double pivot_angle = pivotTargetToAngle(m_periodicIO.pivot_target);
-    m_periodicIO.intake_pivot_voltage = m_pivotPID.calculate(getPivotAngleDegrees(), pivot_angle);
 
-    // If the pivot is at exactly 0.0, it's probably not connected, so disable it
-    if (m_pivotEncoder.get() == 0.0) {
-      m_periodicIO.intake_pivot_voltage = 0.0;
-    }
+    m_pivotPID.setReference(pivot_angle * MotorRotationsPerDegree, ControlType.kSmartMotion); // sets the motor setpoint without feed forward to compensate for gravity
+
+    //m_pivotPID.setReference(pivot_angle * MotorRotationsPerDegree, ControlType.kSmartMotion, 0, feedForward, ArbFFUnits.kPercentOut);
+
+    // m_periodicIO.intake_pivot_voltage = m_pivotPID.calculate(getPivotAngleDegrees(), pivot_angle);
+
+    // // If the pivot is at exactly 0.0, it's probably not connected, so disable it
+    // if (m_pivotEncoder.get() == 0.0) {
+    //   m_periodicIO.intake_pivot_voltage = 0.0;
+    // }
 
     // Intake control
     m_periodicIO.intake_speed = intakeStateToSpeed(m_periodicIO.intake_state);
@@ -116,8 +156,8 @@ public class Intake extends Subsystem {
   @Override
   public void outputTelemetry() {
     putNumber("Speed", intakeStateToSpeed(m_periodicIO.intake_state));
-    putNumber("Pivot/Abs Enc (get)", m_pivotEncoder.get());
-    putNumber("Pivot/Abs Enc (getAbsolutePosition)", m_pivotEncoder.getAbsolutePosition());
+    putNumber("Pivot/Abs Enc (get)", m_pivotEncoder.getPosition());
+    // putNumber("Pivot/Abs Enc (getAbsolutePosition)", m_pivotEncoder.getAbsolutePosition());
     putNumber("Pivot/Abs Enc (getPivotAngleDegrees)", getPivotAngleDegrees());
     putNumber("Pivot/Setpoint", pivotTargetToAngle(m_periodicIO.pivot_target));
 
@@ -175,8 +215,10 @@ public class Intake extends Subsystem {
   }
 
   public double getPivotAngleDegrees() {
-    double value = m_pivotEncoder.getAbsolutePosition() -
-        Constants.Intake.k_pivotEncoderOffset + 0.5;
+    double value = m_pivotEncoder.getPosition() ;
+
+        // double value = m_pivotEncoder.getAbsolutePosition() -
+        // Constants.Intake.k_pivotEncoderOffset + 0.5;
 
     return Units.rotationsToDegrees(Helpers.modRotations(value));
   }

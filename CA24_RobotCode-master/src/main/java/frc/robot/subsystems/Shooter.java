@@ -39,27 +39,27 @@ public class Shooter extends Subsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushed);
-    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushed);
+    mLeftShooterMotor = new CANSparkMax(Constants.kShooterLeftMotorId, MotorType.kBrushless);
+    mRightShooterMotor = new CANSparkMax(Constants.kShooterRightMotorId, MotorType.kBrushless);
     mLeftShooterMotor.restoreFactoryDefaults();
     mRightShooterMotor.restoreFactoryDefaults();
 
-    // mLeftShooterPID = mLeftShooterMotor.getPIDController();
-    // mLeftShooterPID.setP(Constants.kShooterP);
-    // mLeftShooterPID.setI(Constants.kShooterI);
-    // mLeftShooterPID.setD(Constants.kShooterD);
-    // mLeftShooterPID.setFF(Constants.kShooterFF);
-    // mLeftShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
+    mLeftShooterPID = mLeftShooterMotor.getPIDController();
+    mLeftShooterPID.setP(Constants.kShooterP);
+    mLeftShooterPID.setI(Constants.kShooterI);
+    mLeftShooterPID.setD(Constants.kShooterD);
+    mLeftShooterPID.setFF(Constants.kShooterFF);
+    mLeftShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
 
-    // mRightShooterPID = mRightShooterMotor.getPIDController();
-    // mRightShooterPID.setP(Constants.kShooterP);
-    // mRightShooterPID.setI(Constants.kShooterI);
-    // mRightShooterPID.setD(Constants.kShooterD);
-    // mRightShooterPID.setFF(Constants.kShooterFF);
-    // mRightShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
+    mRightShooterPID = mRightShooterMotor.getPIDController();
+    mRightShooterPID.setP(Constants.kShooterP);
+    mRightShooterPID.setI(Constants.kShooterI);
+    mRightShooterPID.setD(Constants.kShooterD);
+    mRightShooterPID.setFF(Constants.kShooterFF);
+    mRightShooterPID.setOutputRange(Constants.kShooterMinOutput, Constants.kShooterMaxOutput);
 
-    // mLeftShooterEncoder = mLeftShooterMotor.getEncoder();
-    // mRightShooterEncoder = mRightShooterMotor.getEncoder();
+    mLeftShooterEncoder = mLeftShooterMotor.getEncoder();
+    mRightShooterEncoder = mRightShooterMotor.getEncoder();
 
     mLeftShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
     mRightShooterMotor.setIdleMode(CANSparkFlex.IdleMode.kCoast);
@@ -81,16 +81,16 @@ public class Shooter extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    // double limitedSpeed = mSpeedLimiter.calculate(mPeriodicIO.shooter_rpm);
-    // mLeftShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
-    // mRightShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+    double limitedSpeed = mSpeedLimiter.calculate(mPeriodicIO.shooter_rpm);
+    mLeftShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+    mRightShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
 
     // DAVID - NEED REAL VOLTAGE NUMBER HERE! ONE OF THE NUMBERS MIGHT NEED TO BE NEGATIVE
     // mLeftShooterPID.setReference(8.0, ControlType.kVoltage);
     // mRightShooterPID.setReference(8.0, ControlType.kVoltage);
 
-    mLeftShooterMotor.set(0.8);
-    mRightShooterMotor.set(0.8);
+    // mLeftShooterMotor.set(0.3);
+    // mRightShooterMotor.set(0.3);
   }
 
   @Override
@@ -101,8 +101,8 @@ public class Shooter extends Subsystem {
   @Override
   public void outputTelemetry() {
     putNumber("Speed (RPM):", mPeriodicIO.shooter_rpm);
-    // putNumber("Left speed:", mLeftShooterEncoder.getVelocity());
-    // putNumber("Right speed:", mRightShooterEncoder.getVelocity());
+    putNumber("Left speed:", mLeftShooterEncoder.getVelocity());
+    putNumber("Right speed:", mRightShooterEncoder.getVelocity());
   }
 
   @Override

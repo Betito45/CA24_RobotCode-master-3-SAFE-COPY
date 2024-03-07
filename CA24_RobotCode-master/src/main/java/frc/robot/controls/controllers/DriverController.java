@@ -34,7 +34,7 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsFullIntake() {
-    return this.getRawButton(1);
+    return this.getRawButton(1);  // this is button A on xbox controller
   }
 
   public boolean getWantsIntake() {

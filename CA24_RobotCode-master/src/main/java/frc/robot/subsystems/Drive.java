@@ -33,7 +33,7 @@ public class Drive extends Subsystem {
             ElectronicsIDs.FrontLeftDriveMotorID,
             ElectronicsIDs.FrontLeftTurnMotorID,
             ElectronicsIDs.FrontLeftTurnEncoderID,
-            DriveConstants.FrontLeftMagnetOffset,false   );
+            DriveConstants.FrontLeftMagnetOffset,false  );
 
     private final SwerveModule frontRight = new SwerveModule(
             "frontRight",
@@ -80,14 +80,15 @@ public class Drive extends Subsystem {
         super("Drive");
 
 
+        // DAVID - I COMMENTED THIS OUT MORNING OF 3/5
         navX = new AHRS(Port.kMXP);
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                zeroHeading();
-            } catch (Exception e) {
-            }
-        }).start();
+        // new Thread(() -> {
+        //     try {
+        //         Thread.sleep(1000);
+        //         zeroHeading();
+        //     } catch (Exception e) {
+        //     }
+        // }).start();
 
         odometry = new SwerveDriveOdometry(
                 DriveConstants.kinematics,
