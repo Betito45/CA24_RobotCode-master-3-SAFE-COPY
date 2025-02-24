@@ -21,9 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.autonomous.AutoChooser;
-import frc.robot.autonomous.AutoRunner;
-import frc.robot.autonomous.tasks.Task;
+
+
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.simulation.Field;
@@ -64,9 +63,8 @@ public class Robot extends LoggedRobot {
   public final LEDs m_leds = LEDs.getInstance();
 
   // Auto stuff
-  private Task m_currentTask;
-  private AutoRunner m_autoRunner = AutoRunner.getInstance();
-  private AutoChooser m_autoChooser = new AutoChooser();
+ 
+
 
   // Simulation stuff
   private final Field m_field = Field.getInstance();
@@ -105,34 +103,16 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
-    m_currentTask = m_autoRunner.getNextTask();
+   
 
     // Start the first task
-    if (m_currentTask != null) {
-      m_currentTask.start();
-    }
+   
   }
 
   @Override
   public void autonomousPeriodic() {
     // If there is a current task, run it
-    if (m_currentTask != null) {
-      // Run the current task
-      m_currentTask.update();
-      m_currentTask.updateSim();
-
-      // If the current task is finished, get the next task
-      if (m_currentTask.isFinished()) {
-        m_currentTask.done();
-        m_currentTask = m_autoRunner.getNextTask();
-
-        // Start the next task
-        if (m_currentTask != null) {
-          m_currentTask.start();
-        }
-      }
-    }
+   
   }
 
   @Override

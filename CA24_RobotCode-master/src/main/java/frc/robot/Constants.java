@@ -1,8 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -127,7 +124,7 @@ public class Constants {
                                                                                                // spreadsheet
         public static final double PhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI; // CHANGE
 
-        public static final double FrontLeftMagnetOffset = -0.481689;
+        public static final double FrontLeftMagnetOffset = -0.197021;
         public static final double FrontRightMagnetOffset = -0.052979;
         public static final double BackLeftMagnetOffset = -0.264893;
         public static final double BackRightMagnetOffset = -0.135254;
@@ -145,12 +142,7 @@ public class Constants {
 
         public static final double maxModuleSpeed = 4.5; // M/S
 
-        public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-                new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(5.0, 0, 0), // Rotation constants
-                maxModuleSpeed,
-                flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
-                new ReplanningConfig());
+
 
         public static final double WheelRadius = Units.inchesToMeters(2.0);
         public static final double WheelCircumference = 2.0 * WheelRadius * Math.PI;
